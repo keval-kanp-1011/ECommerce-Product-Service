@@ -13,8 +13,10 @@ object DatabaseSingleton {
     fun init(config: ApplicationConfig) {
 //        val driverClassName = "org.h2.Driver"
 //        val jdbcURL = "jdbc:h2:file:./build/db"
-        val driverClassName = config.property("storage.driverClassName").getString()
-        val jdbcURL = config.property("storage.jdbcURL").getString()
+        //val driverClassName = config.property("storage.driverClassName").getString()
+        //val jdbcURL = config.property("storage.jdbcURL").getString()
+        val driverClassName = "org.postgresql.Driver"
+        val jdbcURL = "jdbc:postgresql://db-products:5432/ecommerce-products?user=postgres&&password=1234"
         val database = Database.connect(jdbcURL, driverClassName)
         transaction(database) {
             SchemaUtils.create(Products)
