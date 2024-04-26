@@ -18,7 +18,7 @@ fun main() {
 
     val server = embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module)
 
-    val consulClient = Consul.builder().withUrl("http://192.168.136.154:8500").build()
+    val consulClient = Consul.builder().withUrl("http://local-machine-address:8500").build()
     val service = ImmutableRegistration.builder()
         .id("product-${server.environment.connectors[0].port}")
         .name("product-service")
@@ -38,7 +38,7 @@ fun Application.module() {
             json()
         }
         install(ConsulFeature) {
-            consulUrl = "http://192.168.136.154:8500"
+            consulUrl = "http://local-machine-address:8500"
         }
 
     }
