@@ -12,6 +12,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -71,11 +72,19 @@ fun Application.configureRouting(client: HttpClient) {
                     call.respond(HttpStatusCode.BadRequest)
                     return@put
                 }
+
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.getClaim("userId", Int::class)
                 val productDetails = call.receive<EditProductDetailsDB>()
 
-                val response = productRepo.editProductDetails(productId,productDetails)
+                if (userId == null) {
+                    call.respond("userid is blank")
+                } else {
+                    val response = productRepo.editProductDetails(userId, productId,productDetails)
 
-                call.respond(response.data?:"data not found")
+                    call.respond(response.data?:"data not found")
+                }
+
             }
 
             delete("/delete-product") {
@@ -85,10 +94,24 @@ fun Application.configureRouting(client: HttpClient) {
                     return@delete
                 }
 
-                val response = productRepo.deleteProduct(productId)
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.getClaim("userId", Int::class)
 
-                call.respond(response.data?:"response not available")
+                if (userId == null) {
+                    call.respond("userid is blank")
+                } else {
+                    val response = productRepo.deleteProduct(userId, productId)
 
+                    call.respond(response.data?:"response not available")
+                }
+
+
+            }
+
+            get("secret") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.getClaim("userId", String::class)
+                call.respond(HttpStatusCode.OK, "Your userId is $userId")
             }
         }
     }
