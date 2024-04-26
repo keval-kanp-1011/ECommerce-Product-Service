@@ -16,9 +16,9 @@ import io.ktor.server.netty.*
 fun main() {
 
 
-    val server = embeddedServer(Netty, port = 8090, host = "127.0.0.1", module = Application::module)
+    val server = embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module)
 
-    val consulClient = Consul.builder().withUrl("http://localhost:8500").build()
+    val consulClient = Consul.builder().withUrl("http://192.168.136.154:8500").build()
     val service = ImmutableRegistration.builder()
         .id("product-${server.environment.connectors[0].port}")
         .name("product-service")
@@ -33,15 +33,12 @@ fun main() {
 fun Application.module() {
     DatabaseSingleton.init(environment.config)
 
-    environment.config.config("")
-
     val client = HttpClient(Apache5) {
         install(ContentNegotiation) {
-            json() // Example: Register JSON content transformation
-            // Add more transformations as needed for other content types
+            json()
         }
         install(ConsulFeature) {
-            consulUrl = "http://localhost:8500"
+            consulUrl = "http://192.168.136.154:8500"
         }
 
     }

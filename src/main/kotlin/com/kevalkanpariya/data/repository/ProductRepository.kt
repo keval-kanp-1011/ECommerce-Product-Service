@@ -8,6 +8,7 @@ import com.kevalkanpariya.util.BasicResponse
 interface ProductRepository {
 
     suspend fun createProduct(
+        userId: Int,
         insertProductDetailsDB: InsertProductDetailsDB
     ): BasicResponse<Product>
 
@@ -16,6 +17,7 @@ interface ProductRepository {
     ): BasicResponse<Boolean>
 
     suspend fun editProductDetails(
+        userId: Int,
         productId: Int,
         editProductDetailsDB: EditProductDetailsDB
     ): BasicResponse<Boolean>

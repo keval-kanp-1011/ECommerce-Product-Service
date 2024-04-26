@@ -10,9 +10,9 @@ import com.kevalkanpariya.util.BasicResponse
 class ProductRepoImpl(
     private val productDAO: ProductDAO
 ): ProductRepository {
-    override suspend fun createProduct(insertProductDetailsDB: InsertProductDetailsDB): BasicResponse<Product> {
+    override suspend fun createProduct(userId: Int, insertProductDetailsDB: InsertProductDetailsDB): BasicResponse<Product> {
         return try {
-            val product = productDAO.insertProduct(insertProductDetailsDB)
+            val product = productDAO.insertProduct(userId, insertProductDetailsDB)
             BasicResponse.Success(data = product)
         } catch (e: Exception) {
             BasicResponse.Error(error = e.message?: "something went wrong")
@@ -29,12 +29,15 @@ class ProductRepoImpl(
     }
 
     override suspend fun editProductDetails(
+        userId: Int,
         productId: Int,
         editProductDetailsDB: EditProductDetailsDB
     ): BasicResponse<Boolean> {
         return try {
 
-            val isEdited = productDAO.editProductDetails(productId, editProductDetailsDB)
+            //if user role is admin then allowed to edit
+            val isEdited = productDAO.editProductDetails(userId,productId, editProductDetailsDB)
+
             BasicResponse.Success(data = isEdited)
         } catch (e: Exception) {
             BasicResponse.Error(error = e.message?: "something went wrong")

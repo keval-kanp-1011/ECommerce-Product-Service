@@ -8,6 +8,7 @@ import com.kevalkanpariya.data.models.Product
 interface ProductDAO {
 
     suspend fun insertProduct(
+        userId: Int,
         productDetails: InsertProductDetailsDB
     ): Product?
 
@@ -16,6 +17,7 @@ interface ProductDAO {
     ): Boolean
 
     suspend fun editProductDetails(
+        userId: Int,
         productId: Int,
         productDetails: EditProductDetailsDB
     ): Boolean
